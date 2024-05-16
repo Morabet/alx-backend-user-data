@@ -14,7 +14,7 @@ PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
-    """ returns the log message obfuscated"""
+    '''returns the log message obfuscated:'''
     pattern = "|".join(fields)
     return re.sub(
         fr'({pattern})=([^{separator}]+)', f'\\1={redaction}', message
@@ -22,17 +22,20 @@ def filter_datum(fields: List[str], redaction: str,
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class"""
+    """ Redacting Formatter class
+    """
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
+        '''initializing the instance'''
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
+        '''formatting record'''
         filtered_message = filter_datum(
             self.fields, self.REDACTION, record.getMessage(), self.SEPARATOR)
         record.msg = filtered_message
