@@ -37,11 +37,11 @@ class Auth:
 
     def valid_login(self, email: str, password: str) -> bool:
         """ Credentials validation"""
-        user = self._db.find_user_by(email=email)
-        if user:
-            if bcrypt.checkpw(password.encode(), user.hashed_password):
-                return True
-        return False
+        try:
+            user = self._db.find_user_by(email=email)
+        except NoResultFound:
+            return False
+        return bcrypt.checkpw(password.encode(), user.hashed_password)
 
     def create_session(self, email: str) -> str:
         """ Get session ID"""
