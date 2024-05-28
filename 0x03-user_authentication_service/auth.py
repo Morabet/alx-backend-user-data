@@ -29,11 +29,11 @@ class Auth:
 
     def register_user(self, email: str, password: str) -> User:
         """ Register user if Not exist"""
-        if self._db.find_user_by(email=email):
-            raise ValueError(f"User {email} already exists")
-        password = _hash_password(password)
-        user = self._db.add_user(email=email, hashed_password=password)
-        return user
+        try:
+            self._db.find_user_by(email=email)
+        except NoResultFound:
+            return self._db.add_user(email, _hash_password(password))
+        raise ValueError(f"User {email} already exists")
 
     def valid_login(self, email: str, password: str) -> bool:
         """ Credentials validation"""
